@@ -7,8 +7,10 @@ namespace ReadingBookApi.Customized.AutoMapper
     {
         public BookMapp()
         {
-            CreateMap<BookVM,T_Book>();
-            CreateMap<T_Book, BookVM>();
+            CreateMap<BookDetailVM,T_Book>();
+            CreateMap<T_Book, BookDetailVM>().ForMember(dest => dest.reviews, opt => opt.MapFrom(src => src.review_Ratings));
+            CreateMap<T_Book, BookSummaryVM>();
+
         }
     }
 }

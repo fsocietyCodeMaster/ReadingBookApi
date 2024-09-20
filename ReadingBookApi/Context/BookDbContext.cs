@@ -12,7 +12,7 @@ namespace ReadingBookApi.Context
         }
 
         public DbSet<T_Book> t_Books { get; set; }
-        public DbSet<T_Review> t_Review_Ratings { get; set; }
+        public DbSet<T_Review> t_Review { get; set; }
 
 
     }

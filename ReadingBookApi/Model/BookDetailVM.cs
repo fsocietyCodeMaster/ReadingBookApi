@@ -2,7 +2,7 @@
 
 namespace ReadingBookApi.Model
 {
-    public class BookVM
+    public class BookDetailVM
     {
         [StringLength(30)]
         public string? Title { get; set; }
@@ -16,5 +16,7 @@ namespace ReadingBookApi.Model
 
         [StringLength(50)]
         public string? Genre { get; set; }
+
+        public ICollection<ReviewVM?> reviews { get; set; }
     }
 }

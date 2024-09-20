@@ -19,7 +19,7 @@ namespace ReadingBookApi.Service
             _context = context;
             _map = map;
         }
-        public async Task<ResponseVM> AddBook(BookVM book)
+        public async Task<ResponseVM> AddBook(BookDetailVM book)
         {
             if(book == null)
             {
@@ -49,17 +49,20 @@ namespace ReadingBookApi.Service
         }
 
 
-        public async Task<ResponseVM> Get(Guid id)
+        public async Task<ResponseVM> Get(Guid id, int page, int size)
         {
-            var book =  await _context.t_Books.FirstOrDefaultAsync(c => c.BookId == id);
+            var book =  await _context.t_Books.Include(c=>c.review_Ratings).FirstOrDefaultAsync(c => c.BookId == id);
             if(book != null)
             {
+                var reviewPaginated = book.review_Ratings.Skip(((page - 1) * size)).Take(size).ToList();
+                var bookVm = _map.Map<BookDetailVM>(book);
+                bookVm.reviews = _map.Map<ICollection<ReviewVM>>(reviewPaginated);
                 var success = new ResponseVM
                 {
                     Message = $"The Book {book.Title} successfully retrieved .",
                     IsSuccess = true,
                     Status = HttpStatusCode.OK.ToString(),
-                    Data = new {response = _map.Map<BookVM>(book)}
+                    Data = new {response = bookVm}
                 };
                 return success;
             }
@@ -75,35 +78,9 @@ namespace ReadingBookApi.Service
             }
         }
 
-        public async Task<ResponseVM> GetAll()
-        {
-            var books =  await _context.t_Books.ToListAsync();
-
-            if (books != null && books.Any())
-            {
-                var success = new  ResponseVM
-                {
-                    Message = "Books successfully retrieved .",
-                    IsSuccess = true,
-                    Status = HttpStatusCode.OK.ToString(),
-                    Data = new {response = _map.Map<IEnumerable<BookVM>>(books)}
-                };
-                return success;
-            }
-            else
-            {
-                var error = new ResponseVM
-                {
-                    Message = "Nothing found.",
-                    IsSuccess = false,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Data = new BookVM { }
-                };
-                return error;
-            }
-        }
+       
         
-        public async Task<ResponseVM> Update(Guid id, BookVM book)
+        public async Task<ResponseVM> Update(Guid id, BookDetailVM book)
         {
             if(book == null)
             {
@@ -112,7 +89,7 @@ namespace ReadingBookApi.Service
                     Message = "Nothing found.",
                     IsSuccess = false,
                     Status = HttpStatusCode.NotFound.ToString(),
-                    Data = new BookVM { }
+                    Data = new BookDetailVM { }
                 };
                 return error;
 
@@ -130,7 +107,7 @@ namespace ReadingBookApi.Service
                         Message = $"The Book {bookUpdate.Title} successfully updated .",
                         IsSuccess = true,
                         Status = HttpStatusCode.OK.ToString(),
-                        Data = new { response = _map.Map<BookVM>(bookUpdated) }
+                        Data = new { response = _map.Map<BookDetailVM>(bookUpdated) }
                     };
                     return success;
 
@@ -142,7 +119,7 @@ namespace ReadingBookApi.Service
                         Message = "Nothing found.",
                         IsSuccess = false,
                         Status = HttpStatusCode.NotFound.ToString(),
-                        Data = new BookVM { }
+                        Data = new BookDetailVM { }
                     };
                     return error;
                 }
@@ -182,7 +159,7 @@ namespace ReadingBookApi.Service
             }
         }
 
-        public async Task<ResponseVM> UpdatePartial(Guid id, JsonPatchDocument<BookVM> book)
+        public async Task<ResponseVM> UpdatePartial(Guid id, JsonPatchDocument<BookDetailVM> book)
         {
             if (book == null)
             {
@@ -191,7 +168,7 @@ namespace ReadingBookApi.Service
                     Message = "Nothing found.",
                     IsSuccess = false,
                     Status = HttpStatusCode.NotFound.ToString(),
-                    Data = new BookVM { }
+                    Data = new BookDetailVM { }
                 };
                 return error;
 
@@ -203,7 +180,7 @@ namespace ReadingBookApi.Service
                 if (bookDb != null)
                 {
 
-                    var bookMapped = _map.Map<BookVM>(bookDb);
+                    var bookMapped = _map.Map<BookDetailVM>(bookDb);
 
                     book.ApplyTo(bookMapped);
 
@@ -216,7 +193,7 @@ namespace ReadingBookApi.Service
                         Message = $"The Book {bookPatched.Title} successfully updated .",
                         IsSuccess = true,
                         Status = HttpStatusCode.OK.ToString(),
-                        Data = new { response = _map.Map<BookVM>(bookPatched) }
+                        Data = new { response = _map.Map<BookDetailVM>(bookPatched) }
                     };
                     return success;
 
@@ -228,7 +205,7 @@ namespace ReadingBookApi.Service
                         Message = "Nothing found.",
                         IsSuccess = false,
                         Status = HttpStatusCode.NotFound.ToString(),
-                        Data = new BookVM { }
+                        Data = new BookDetailVM { }
                     };
                     return error;
                 }
@@ -247,7 +224,7 @@ namespace ReadingBookApi.Service
                     Message = "Search successfully done .",
                     IsSuccess = true,
                     Status = HttpStatusCode.OK.ToString(),
-                    Data = new { response = _map.Map<IEnumerable<BookVM>>(books) }
+                    Data = new { response = _map.Map<IEnumerable<BookDetailVM>>(books) }
                 };
                 return success;
             }
@@ -266,15 +243,39 @@ namespace ReadingBookApi.Service
 
         public async Task<ResponseVM> GetAllByPage(int page, int size)
         {
-            var books = await _context.t_Books.Skip(((page - 1) * size)).Take(size).ToListAsync();
+            var books = await _context.t_Books.Include(c => c.review_Ratings).Skip(((page - 1) * size)).Take(size).ToListAsync();
             if (books != null)
             {
+
+                foreach (var review in books)
+                {
+                    var totalRate = 0;
+                    var numberOfRating = 0;
+
+                    foreach (var rate in review.review_Ratings)
+                    {
+                        totalRate += rate.Rating;
+                        numberOfRating++;
+                        
+                    }
+                    if (numberOfRating > 0)
+                    {
+                        var averageRating = totalRate / numberOfRating;
+                        books.AverageRating = averageRating;
+                    }
+                    else
+                    {
+                        books.AverageRating = 0; 
+                    }
+                }
+
+
                 var success = new ResponseVM
                 {
                     Message = "Books successfully retrieved .",
                     IsSuccess = true,
                     Status = HttpStatusCode.OK.ToString(),
-                    Data = new { response = _map.Map<IEnumerable<BookVM>>(books) }
+                    Data = new { response = _map.Map<IEnumerable<BookSummaryVM>>(books) }
                 };
                 return success;
             }

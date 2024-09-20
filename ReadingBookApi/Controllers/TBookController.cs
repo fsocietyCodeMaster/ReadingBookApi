@@ -1,9 +1,5 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using ReadingBookApi.Model;
 using ReadingBookApi.Model;
 using ReadingBookApi.Repository;
 
@@ -24,11 +20,14 @@ namespace ReadingBookApi.Controllers
 
         //[Authorize(Roles = "admin")]
         [HttpGet("books")]
-        public async Task<ActionResult<ResponseVM>> GetAllBooks()
+        public async Task<ActionResult<ResponseVM>> GetAllBooks(int? page)
         {
             try
             {
-                var result = await _book.GetAll();
+                var pageNumber = page ?? 1;
+                var pageSize = 4;
+
+                var result = await _book.GetAllByPage(pageNumber,pageSize);
                 if (result.IsSuccess == true)
                 {
                     return Ok(result);
@@ -58,11 +57,13 @@ namespace ReadingBookApi.Controllers
 
 
         [HttpGet("book")]
-        public async Task<ActionResult<ResponseVM>> GetBook(Guid id)
+        public async Task<ActionResult<ResponseVM>> GetBook(Guid id,int? page)
         {
             try
             {
-                var result = await _book.Get(id);
+                var pageReviewNumber = page ?? 1;
+                var pageReviewSize = 4;
+                var result = await _book.Get(id, pageReviewNumber, pageReviewSize);
                 if (result.IsSuccess == true)
                 {
                     return Ok(result);
@@ -91,7 +92,7 @@ namespace ReadingBookApi.Controllers
 
 
         [HttpPost("add")]
-        public async Task<ActionResult<ResponseVM>> CreateBook(BookVM book)
+        public async Task<ActionResult<ResponseVM>> CreateBook(BookDetailVM book)
         {
             if (ModelState.IsValid)
             {
@@ -164,7 +165,7 @@ namespace ReadingBookApi.Controllers
 
 
         [HttpPut("editbook")]
-        public async Task<ActionResult<ResponseVM>> UpdateBook(Guid id, BookVM book)
+        public async Task<ActionResult<ResponseVM>> UpdateBook(Guid id, BookDetailVM book)
         {
             if (ModelState.IsValid)
             {
@@ -204,7 +205,7 @@ namespace ReadingBookApi.Controllers
 
 
         [HttpPatch("editpartialbook")]
-        public async Task<ActionResult<ResponseVM>> UpdateBook(Guid id, JsonPatchDocument<BookVM> book)
+        public async Task<ActionResult<ResponseVM>> UpdateBook(Guid id, JsonPatchDocument<BookDetailVM> book)
         {
             if (ModelState.IsValid)
             {

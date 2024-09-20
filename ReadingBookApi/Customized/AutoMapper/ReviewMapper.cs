@@ -7,8 +7,9 @@ namespace ReadingBookApi.Customized.AutoMapper
     {
         public ReviewMapper()
         {
-            CreateMap<ReviewVM,T_Review>();
-            CreateMap<T_Review,ReviewVM>();
+            CreateMap<ReviewVM, T_Review>();
+            CreateMap<T_Review, ReviewVM>();
+
         }
     }
 }

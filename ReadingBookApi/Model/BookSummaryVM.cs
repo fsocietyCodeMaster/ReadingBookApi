@@ -2,11 +2,8 @@
 
 namespace ReadingBookApi.Model
 {
-    public class T_Book
+    public class BookSummaryVM
     {
-        [Key]
-        public Guid BookId { get; set; } = Guid.NewGuid();
-
         [StringLength(30)]
         public string? Title { get; set; }
 
@@ -16,11 +13,8 @@ namespace ReadingBookApi.Model
         [StringLength(30)]
         public string? Author { get; set; }
 
+
         [StringLength(50)]
         public string? Genre { get; set; }
- 
-        public double? AverageRating { get; set; }
-        public ICollection<T_Review> review_Ratings { get; set; }
-        
     }
 }

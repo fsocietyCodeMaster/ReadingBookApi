@@ -21,7 +21,7 @@ namespace ReadingBookApi.Service
             _map = map;
         }
 
-        public async Task<ResponseVM> AddReview(ReviewVM  review)
+        public async Task<ResponseVM> AddReview(ReviewVM  review, string user, Guid bookId)
         {
             if (review == null)
             {
@@ -35,23 +35,46 @@ namespace ReadingBookApi.Service
             }
             else
             {
-                var reviewMaped = _map.Map<T_Review>(review);
-                _context.Add(reviewMaped);
-                await _context.SaveChangesAsync();
-
-                var success = new ResponseVM
+                var minRate = 1;
+                var maxRate = 5;
+                if (review.Rating < minRate || review.Rating > maxRate)
                 {
-                    Message = "Review successfully added.",
-                    IsSuccess = true,
-                    Status = HttpStatusCode.OK.ToString(),
-                };
-                return success;
+                    var error = new ResponseVM
+                    {
+                        Message = "You should choose between 1 to 5.",
+                        IsSuccess = false,
+                        Status = HttpStatusCode.BadRequest.ToString()
+                    };
+                    return error;
+                }
+                else
+                {
+                    var reviewMaped = new T_Review()
+                    {
+                        UserId = user,
+                        BookId = bookId,
+                        Created = DateTimeOffset.Now.LocalDateTime,
+                        Rating = review.Rating,
+                        Comment = review.Comment,
+                    };
+                    _context.Add(reviewMaped);
+                    await _context.SaveChangesAsync();
+
+                    var success = new ResponseVM
+                    {
+                        Message = "Review successfully added.",
+                        IsSuccess = true,
+                        Status = HttpStatusCode.OK.ToString(),
+                    };
+                    return success;
+                }
+
             }
         }
 
-        public async Task<ResponseVM> Delete(Guid id)
+        public async Task<ResponseVM> Delete(Guid id, string userId)
         {
-            var review = await _context.t_Review_Ratings.FirstOrDefaultAsync(c => c.ReviewId == id);
+            var review = await _context.t_Review.FirstOrDefaultAsync(c => c.ReviewId == id);
             if (review == null)
             {
                 var error = new ResponseVM
@@ -64,23 +87,41 @@ namespace ReadingBookApi.Service
             }
             else
             {
-                _context.Remove(review);
-
-                var success = new ResponseVM
+                if (review.UserId == userId)
                 {
-                    Message = "Review successfully deleted.",
-                    IsSuccess = true,
-                    Status = HttpStatusCode.OK.ToString()
-                };
-                return success;
+                    _context.Remove(review);
+                   await _context.SaveChangesAsync();
+                    var success = new ResponseVM
+                    {
+                        Message = "Review successfully deleted.",
+                        IsSuccess = true,
+                        Status = HttpStatusCode.OK.ToString()
+                    };
+                    return success;
+                }
+                else
+                {
+                    var error = new ResponseVM
+                    {
+                        Message = "User not found.",
+                        IsSuccess = false,
+                        Status = HttpStatusCode.BadRequest.ToString()
+                    };
+                    return error;
+
+                }
             }
         }
 
-        public async Task<ResponseVM> GetAll()
+        public async Task<ResponseVM> GetAll(string userId)
         {
-            var review = await _context.t_Review_Ratings.ToListAsync();
-
-            if (review != null && review.Any())
+            var review = await _context.t_Review.ToListAsync();
+            var user = string.Empty;
+            foreach (var item in review)
+            {
+                 user = item.UserId;
+            }
+            if (review != null && review.Any() && userId == user)
             {
                 var success = new ResponseVM
                 {
@@ -98,7 +139,7 @@ namespace ReadingBookApi.Service
                     Message = "Nothing found.",
                     IsSuccess = false,
                     Status = HttpStatusCode.NotFound.ToString(),
-                    Data = new T_Review { }
+                    Data = null
                 };
                 return error;
             }
@@ -106,7 +147,7 @@ namespace ReadingBookApi.Service
 
       
 
-        public async Task<ResponseVM> UpdatePartial(Guid id, JsonPatchDocument<ReviewVM> review)
+        public async Task<ResponseVM> UpdatePartial(Guid id, JsonPatchDocument<ReviewVM> review, string userId)
         {
             if (review == null)
             {
@@ -123,15 +164,15 @@ namespace ReadingBookApi.Service
             else
             {
 
-                var reviewDb = await _context.t_Review_Ratings.FirstOrDefaultAsync(c => c.ReviewId == id);
-                if (reviewDb != null)
+                var reviewDb = await _context.t_Review.FirstOrDefaultAsync(c => c.ReviewId == id);
+                if (reviewDb != null && reviewDb.UserId == userId)
                 {
 
                     var reviewMapped = _map.Map<ReviewVM>(reviewDb);
 
                     review.ApplyTo(reviewMapped);
 
-                    var bookPatched = _map.Map(reviewMapped, reviewDb);
+                    var reviewPatched = _map.Map(reviewMapped, reviewDb);
                     await _context.SaveChangesAsync();
 
 
@@ -140,7 +181,7 @@ namespace ReadingBookApi.Service
                         Message = $"Review successfully updated .",
                         IsSuccess = true,
                         Status = HttpStatusCode.OK.ToString(),
-                        Data = new { response = _map.Map<BookVM>(bookPatched) }
+                        Data = new { response = _map.Map<ReviewVM>(reviewPatched) }
                     };
                     return success;
 
@@ -152,7 +193,7 @@ namespace ReadingBookApi.Service
                         Message = "Nothing found.",
                         IsSuccess = false,
                         Status = HttpStatusCode.NotFound.ToString(),
-                        Data = new ReviewVM { }
+                        Data = null
                     };
                     return error;
                 }
