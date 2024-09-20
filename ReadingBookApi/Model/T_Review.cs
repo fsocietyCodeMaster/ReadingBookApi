@@ -16,7 +16,7 @@ namespace ReadingBookApi.Model
         public T_Book Book { get; set; }
 
         public string UserId { get; set; }
-
+        public string UserName { get; set; }
         public DateTime Created { get; set; }
 
     }

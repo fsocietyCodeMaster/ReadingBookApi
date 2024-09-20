@@ -30,12 +30,13 @@ namespace ReadingBookApi.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = User.FindFirstValue(ClaimTypes.NameIdentifier).ToString();
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier).ToString();
+                var userName = User.Identity.Name;
                 try
                 {
                     var bookResult = await _book.GetBookId(BookId);
                     var bookId = bookResult.BookId;
-                    var reviewResult = await _review.AddReview(review, user, bookId);
+                    var reviewResult = await _review.AddReview(review, userId, bookId, userName);
 
                     if (reviewResult.IsSuccess == true)
                     {

@@ -21,7 +21,7 @@ namespace ReadingBookApi.Service
             _map = map;
         }
 
-        public async Task<ResponseVM> AddReview(ReviewVM  review, string user, Guid bookId)
+        public async Task<ResponseVM> AddReview(ReviewVM  review, string user, Guid bookId, string name)
         {
             if (review == null)
             {
@@ -57,6 +57,7 @@ namespace ReadingBookApi.Service
                         Created = DateTimeOffset.Now.LocalDateTime,
                         Rating = review.Rating,
                         Comment = review.Comment,
+                        UserName = name
                     };
                     _context.Add(reviewMaped);
                     await _context.SaveChangesAsync();
