@@ -6,17 +6,17 @@ namespace BazresiApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IUser _user;
-        private readonly ILogger<AuthenticationController> _logger;
-        public AuthenticationController(IUser user, ILogger<AuthenticationController> logger)
+        private readonly ILogger<AuthController> _logger;
+        public AuthController(IUser user, ILogger<AuthController> logger)
         {
             _user = user;
             _logger = logger;
         }
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterVM register)
         {
             try
@@ -53,7 +53,7 @@ namespace BazresiApi.Controllers
         }
 
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginVM login)
         {
             if (ModelState.IsValid)
@@ -95,5 +95,6 @@ namespace BazresiApi.Controllers
             }
 
         }
+
     }
 }

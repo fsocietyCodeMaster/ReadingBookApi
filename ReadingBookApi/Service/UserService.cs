@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace ReadingBookApi.Services
 {
@@ -16,12 +17,14 @@ namespace ReadingBookApi.Services
         private readonly UserManager<CustomUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly SignInManager<CustomUser> _signInManager;
 
-        public UserService( UserManager<CustomUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public UserService( UserManager<CustomUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration,SignInManager<CustomUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _signInManager = signInManager;
         }
 
 

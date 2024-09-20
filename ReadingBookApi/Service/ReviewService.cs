@@ -115,38 +115,6 @@ namespace ReadingBookApi.Service
             }
         }
 
-        public async Task<ResponseVM> GetAll(string userId)
-        {
-            var review = await _context.t_Review.ToListAsync();
-            var user = string.Empty;
-            foreach (var item in review)
-            {
-                 user = item.UserId;
-            }
-            if (review != null && review.Any() && userId == user)
-            {
-                var success = new ResponseVM
-                {
-                    Message = "Reviews successfully retrieved .",
-                    IsSuccess = true,
-                    Status = HttpStatusCode.OK.ToString(),
-                    Data = new { response = _map.Map<IEnumerable<ReviewVM>>(review) }
-                };
-                return success;
-            }
-            else
-            {
-                var error = new ResponseVM
-                {
-                    Message = "Nothing found.",
-                    IsSuccess = false,
-                    Status = HttpStatusCode.NotFound.ToString(),
-                    Data = null
-                };
-                return error;
-            }
-        }
-
       
 
         public async Task<ResponseVM> UpdatePartial(Guid id, JsonPatchDocument<ReviewVM> review, string userId)

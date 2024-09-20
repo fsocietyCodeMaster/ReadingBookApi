@@ -12,11 +12,11 @@ namespace ReadingBookApi.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        private readonly ILogger<TBookController> _logger;
+        private readonly ILogger<BookAdminController> _logger;
         private readonly IBook _book;
         private readonly IReview _review;
 
-        public ReviewController(ILogger<TBookController> logger, IBook book, IReview review)
+        public ReviewController(ILogger<BookAdminController> logger, IBook book, IReview review)
         {
 
             _logger = logger;
@@ -25,7 +25,7 @@ namespace ReadingBookApi.Controllers
         }
 
 
-        [HttpPost("addreview")]
+        [HttpPost("add")]
         public async Task<ActionResult> Add(Guid BookId, ReviewVM review)
         {
             if (ModelState.IsValid)
@@ -69,7 +69,7 @@ namespace ReadingBookApi.Controllers
 
 
 
-        [HttpPatch("editreview")]
+        [HttpPatch("edit")]
         public async Task<ActionResult<ResponseVM>> Update(Guid id, JsonPatchDocument<ReviewVM> review)
         {
             if (ModelState.IsValid)
@@ -116,7 +116,7 @@ namespace ReadingBookApi.Controllers
 
 
 
-        [HttpDelete("deletereview")]
+        [HttpDelete("delete")]
         public async Task<ActionResult<ResponseVM>> Delete(Guid id)
         {
             try
@@ -156,20 +156,7 @@ namespace ReadingBookApi.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<ActionResult<ResponseVM>> GetAllReview()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                var user = User.FindFirstValue(ClaimTypes.NameIdentifier).ToString();
-                return await _review.GetAll(user);
-            }
-            else
-            {
-                return Unauthorized();
-            }
 
-        }
 
     }
 }

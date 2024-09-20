@@ -8,6 +8,5 @@ namespace ReadingBookApi.Repository
         Task<ResponseVM> AddReview(ReviewVM review,string user,Guid bookId, string name);
         Task<ResponseVM> UpdatePartial(Guid id, JsonPatchDocument<ReviewVM> book,string userId);
         Task<ResponseVM> Delete(Guid id,string userId);
-        Task<ResponseVM> GetAll(string userId);
     }
 }

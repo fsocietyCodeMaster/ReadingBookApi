@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ReadingBookApi.Model;
 using ReadingBookApi.Repository;
 
@@ -10,10 +9,10 @@ namespace ReadingBookApi.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly ILogger<TBookController> _logger;
+        private readonly ILogger<BookAdminController> _logger;
         private readonly IBook _book;
 
-        public BookController(ILogger<TBookController> logger, IBook book)
+        public BookController(ILogger<BookAdminController> logger, IBook book)
         {
 
             _logger = logger;
@@ -21,7 +20,7 @@ namespace ReadingBookApi.Controllers
         }
 
 
-        [HttpGet("books")]
+        [HttpGet("All")]
         public async Task<ActionResult<ResponseVM>> Books(int? page)
         {
             try
@@ -58,7 +57,7 @@ namespace ReadingBookApi.Controllers
 
 
 
-        [HttpGet("book")]
+        [HttpGet("Details")]
         public async Task<ActionResult<ResponseVM>> SearchBooks(string search)
         {
 

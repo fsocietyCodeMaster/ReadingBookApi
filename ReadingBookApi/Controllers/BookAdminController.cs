@@ -1,26 +1,28 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ReadingBookApi.Model;
 using ReadingBookApi.Repository;
 
 namespace ReadingBookApi.Controllers
 {
+    [Authorize(Roles ="admin")]
     [Route("api/[controller]")]
     [ApiController]
-    public class TBookController : ControllerBase
+    public class BookAdminController : ControllerBase
     {
-        private readonly ILogger<TBookController> _logger;
+        private readonly ILogger<BookAdminController> _logger;
         private readonly IBook _book;
-        public TBookController(ILogger<TBookController> logger, IBook book)
+        public BookAdminController(ILogger<BookAdminController> logger, IBook book)
         {
 
             _logger = logger;
             _book = book;
         }
 
-        //[Authorize(Roles = "admin")]
-        [HttpGet("books")]
-        public async Task<ActionResult<ResponseVM>> GetAllBooks(int? page)
+        
+        [HttpGet("All")]
+        public async Task<ActionResult<ResponseVM>> GetAll(int? page)
         {
             try
             {
@@ -56,8 +58,8 @@ namespace ReadingBookApi.Controllers
 
 
 
-        [HttpGet("book")]
-        public async Task<ActionResult<ResponseVM>> GetBook(Guid id,int? page)
+        [HttpGet("Details")]
+        public async Task<ActionResult<ResponseVM>> Get(Guid id,int? page)
         {
             try
             {
@@ -91,8 +93,8 @@ namespace ReadingBookApi.Controllers
         }
 
 
-        [HttpPost("add")]
-        public async Task<ActionResult<ResponseVM>> CreateBook(BookDetailVM book)
+        [HttpPost("Add")]
+        public async Task<ActionResult<ResponseVM>> Add(BookDetailVM book)
         {
             if (ModelState.IsValid)
             {
@@ -128,8 +130,8 @@ namespace ReadingBookApi.Controllers
         }
 
 
-        [HttpPost("deletebook")]
-        public async Task<ActionResult<ResponseVM>> DeleteBook(Guid id)
+        [HttpPost("Delete")]
+        public async Task<ActionResult<ResponseVM>> Delete(Guid id)
         {
             try
             {
@@ -164,8 +166,8 @@ namespace ReadingBookApi.Controllers
 
 
 
-        [HttpPut("editbook")]
-        public async Task<ActionResult<ResponseVM>> UpdateBook(Guid id, BookDetailVM book)
+        [HttpPut("Edit")]
+        public async Task<ActionResult<ResponseVM>> Update(Guid id, BookDetailVM book)
         {
             if (ModelState.IsValid)
             {
@@ -204,8 +206,8 @@ namespace ReadingBookApi.Controllers
 
 
 
-        [HttpPatch("editpartialbook")]
-        public async Task<ActionResult<ResponseVM>> UpdateBook(Guid id, JsonPatchDocument<BookDetailVM> book)
+        [HttpPatch("Edit-Partial")]
+        public async Task<ActionResult<ResponseVM>> UpdatePartial(Guid id, JsonPatchDocument<BookDetailVM> book)
         {
             if (ModelState.IsValid)
             {
