@@ -249,7 +249,7 @@ namespace ReadingBookApi.Service
 
                 foreach (var review in books)
                 {
-                    var totalRate = 0;
+                    double totalRate = 0;
                     var numberOfRating = 0;
 
                     foreach (var rate in review.review_Ratings)
@@ -261,15 +261,16 @@ namespace ReadingBookApi.Service
                     if (numberOfRating > 0)
                     {
                         var averageRating = totalRate / numberOfRating;
-                        books.AverageRating = averageRating;
+                        review.AverageRating = Math.Round(averageRating,1);
+                     
                     }
                     else
                     {
-                        books.AverageRating = 0; 
+                        review.AverageRating = 0;
                     }
+                    
                 }
-
-
+                await _context.SaveChangesAsync();
                 var success = new ResponseVM
                 {
                     Message = "Books successfully retrieved .",

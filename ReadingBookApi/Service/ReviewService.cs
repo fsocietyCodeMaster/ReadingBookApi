@@ -39,6 +39,7 @@ namespace ReadingBookApi.Service
                 var maxRate = 5;
                 if (review.Rating < minRate || review.Rating > maxRate)
                 {
+
                     var error = new ResponseVM
                     {
                         Message = "You should choose between 1 to 5.",

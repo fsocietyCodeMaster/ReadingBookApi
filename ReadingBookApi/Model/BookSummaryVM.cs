@@ -16,5 +16,7 @@ namespace ReadingBookApi.Model
 
         [StringLength(50)]
         public string? Genre { get; set; }
+
+        public double? AverageRating { get; set; }
     }
 }
