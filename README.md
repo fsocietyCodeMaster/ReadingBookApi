@@ -40,9 +40,10 @@ Books:
 
 GET /api/books?page=1&size=10: Fetch paginated books.
 
-GET /api/books?bookid=id: Get a single book with reviews and ratings.
+GET /api/book?bookid=id: Get a single book with reviews and ratings.
 
 Reviews:
+
 POST /api/reviews: Add a review for a book.
 
 PUT /api/reviews?reviewid=id: Update a review.
