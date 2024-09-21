@@ -26,11 +26,11 @@ namespace ReadingBookApi.Controllers
             try
             {
                 var pageNumber = page ?? 1;
-                var pageSize = 4;
+                var pageSize = 2;
 
-                var result =  await _book.GetAllByPage(pageNumber, pageSize);
+                var result = await _book.GetAllByPage(pageNumber, pageSize);
                 if (result.IsSuccess == true)
-                { 
+                {
                     return Ok(result);
                 }
                 else
@@ -56,8 +56,42 @@ namespace ReadingBookApi.Controllers
         }
 
 
-
         [HttpGet("Details")]
+        public async Task<ActionResult<ResponseVM>> Book(Guid id, int? page)
+        {
+            try
+            {
+                var pageReviewNumber = page ?? 1;
+                var pageReviewSize = 2;
+
+                var result = await _book.Get(id, pageReviewNumber, pageReviewSize);
+                if (result.IsSuccess == true)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, "an error occurred.");
+
+                var error = new ResponseVM
+                {
+                    Message = "Error.",
+                    IsSuccess = false,
+                    Status = StatusCodes.Status404NotFound.ToString()
+                };
+
+                return BadRequest(error);
+            }
+        }
+
+
+        [HttpGet("Search")]
         public async Task<ActionResult<ResponseVM>> SearchBooks(string search)
         {
 
@@ -91,11 +125,11 @@ namespace ReadingBookApi.Controllers
         }
 
 
-        
+
 
 
 
 
     }
-    
+
 }

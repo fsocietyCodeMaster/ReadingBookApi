@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReadingBookApi.Context;
 using ReadingBookApi.Model;
@@ -21,7 +20,7 @@ namespace ReadingBookApi.Service
             _map = map;
         }
 
-        public async Task<ResponseVM> AddReview(ReviewVM  review, string user, Guid bookId, string name)
+        public async Task<ResponseVM> AddReview(ReviewVM review, string user, Guid bookId, string name)
         {
             if (review == null)
             {
@@ -92,7 +91,7 @@ namespace ReadingBookApi.Service
                 if (review.UserId == userId)
                 {
                     _context.Remove(review);
-                   await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                     var success = new ResponseVM
                     {
                         Message = "Review successfully deleted.",
@@ -115,7 +114,7 @@ namespace ReadingBookApi.Service
             }
         }
 
-      
+
 
         public async Task<ResponseVM> UpdatePartial(Guid id, JsonPatchDocument<ReviewVM> review, string userId)
         {

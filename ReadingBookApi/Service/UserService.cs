@@ -7,19 +7,18 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace ReadingBookApi.Services
 {
     public class UserService : IUser
     {
-       
+
         private readonly UserManager<CustomUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly SignInManager<CustomUser> _signInManager;
 
-        public UserService( UserManager<CustomUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration,SignInManager<CustomUser> signInManager)
+        public UserService(UserManager<CustomUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, SignInManager<CustomUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -126,11 +125,11 @@ namespace ReadingBookApi.Services
                 new(ClaimTypes.Name, userExist.FirstName)
             };
 
-            if(userRole != null)
+            if (userRole != null)
             {
                 foreach (var role in userRole)
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, role));   
+                    claims.Add(new Claim(ClaimTypes.Role, role));
                 }
             }
 

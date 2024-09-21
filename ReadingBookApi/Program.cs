@@ -25,11 +25,11 @@ builder.Services.AddDbContext<BookDbContext>(option =>
     option.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]);
 });
 
-builder.Services.AddIdentity<CustomUser,IdentityRole>(c=>
+builder.Services.AddIdentity<CustomUser, IdentityRole>(c =>
 {
     c.User.RequireUniqueEmail = true;
 
-} ).AddEntityFrameworkStores<BookDbContext>();
+}).AddEntityFrameworkStores<BookDbContext>();
 
 
 builder.Services.AddCustomServices();

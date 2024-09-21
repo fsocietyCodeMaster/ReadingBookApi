@@ -6,7 +6,7 @@ namespace ReadingBookApi.Model
     {
         [StringLength(50)]
         [DataType(DataType.EmailAddress)]
-        public string Email {  get; set; }
+        public string Email { get; set; }
 
         [StringLength(50)]
         [DataType(DataType.Password)]

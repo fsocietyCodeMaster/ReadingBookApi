@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace ReadingBookApi.Customized
 {
-    public static class Extension 
+    public static class Extension
     {
         public static IServiceCollection AddCustomServices(this IServiceCollection services)
         {
             services.AddScoped<IBook, BookService>();
             services.AddScoped<IReview, ReviewService>();
             services.AddScoped<IUser, UserService>();
-       
+
 
             return services;
         }
