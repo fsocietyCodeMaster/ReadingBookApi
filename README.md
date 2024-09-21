@@ -52,4 +52,4 @@ DELETE /api/reviews?reviewid=id: Delete a review.
 
 🤝 Contributions & Contact
 This project is open to contributions. Feel free to fork the repository and submit pull requests.
-For business inquiries or freelance opportunities, contact [meisam_sohrabi@yahoo.com] or connect via [Your LinkedIn].
+For business inquiries or freelance opportunities, contact [meisam_sohrabi@yahoo.com]
